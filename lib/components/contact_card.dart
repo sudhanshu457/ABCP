@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'bottom_sheet_text.dart';
+import 'package:geocoder/geocoder.dart';
 
 class ContactCard extends StatelessWidget {
   ContactCard(
@@ -14,11 +16,12 @@ class ContactCard extends StatelessWidget {
   final String email;
   final String infection;
   final String contactUsername;
-  final DateTime contactTime;
+  Timestamp contactTime;
   final String contactLocation;
 
   @override
   Widget build(BuildContext context) {
+    final contTime=contactTime.toDate();
     return Card(
       elevation: 3.0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
@@ -47,7 +50,7 @@ class ContactCard extends StatelessWidget {
                     SizedBox(height: 5.0),
                     BottomSheetText(
                         question: 'Contact Time',
-                        result: contactTime.toString()),
+                        result: contTime.toString()),
                     SizedBox(height: 5.0),
                     BottomSheetText(
                         question: 'Contact Location', result: contactLocation),

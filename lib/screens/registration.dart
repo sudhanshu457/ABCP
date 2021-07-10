@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:contacttracingprototype/components/rounded_button.dart';
-import 'package:contacttracingprototype/constants.dart';
-import 'package:contacttracingprototype/screens/login.dart';
+import '../components/rounded_button.dart';
+import '../constants.dart';
 import 'nearby_interface.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +19,33 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   String email;
   String password;
   String userName;
+
+  Future<void> _showMyDialog(var errorMessage) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Registration Failed'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: [
+                Text(errorMessage.message),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Okay'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,6 +126,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       });
                     } catch (e) {
                       print(e);
+                      var res = await _showMyDialog(e);
                       Navigator.pushNamed(context, RegistrationScreen.id);
                     }
                   },

@@ -1,17 +1,7 @@
-import 'package:contacttracingprototype/components/rounded_button.dart';
-import 'package:contacttracingprototype/components/userContact.dart';
-import 'package:contacttracingprototype/constants.dart';
-import 'nearby_interface.dart';
+import '../components/userContact.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:location/location.dart';
-import 'package:nearby_connections/nearby_connections.dart';
-import '../components/contact_card.dart';
-import '../constants.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'welcome_screen.dart';
 
@@ -61,7 +51,7 @@ class _AdminScreenState extends State<AdminScreen> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          'Covid Tracing Admin',
+          'Covid Admin',
           style: TextStyle(
             color: Colors.deepPurple[800],
             fontWeight: FontWeight.bold,
@@ -92,18 +82,41 @@ class _AdminScreenState extends State<AdminScreen> {
                 color: Colors.deepPurple[800],
               ),
               child: loggedInUser != null
-                  ? Text(loggedInUser.email)
+                  ? Text(loggedInUser.email,style: TextStyle(fontSize: 35.0,fontStyle: FontStyle.italic,fontWeight: FontWeight.w900),)
                   : Text("Loading"),
             ),
             ListTile(
-              title: Text('I am Infected'),
+              leading: GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTap: () {
+                  setState(() {
+                    _firestore
+                        .collection('users')
+                        .document(loggedInUser.email)
+                        .updateData({
+                      'is infected': true,
+                    });
+                    print("infected");
+                  });
+                  // Then close the drawer
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  width: 48,
+                  height: 48,
+                  padding: const EdgeInsets.symmetric(vertical: 4.0),
+                  alignment: Alignment.center,
+                  child: const CircleAvatar(),
+                ),
+              ),
+              title: Text('Infected',style: TextStyle(fontSize: 25.0),),
               onTap: () {
                 // Update the state of the app
                 setState(() {
                   _firestore
                       .collection('users')
                       .document(loggedInUser.email)
-                      .setData({
+                      .updateData({
                     'is infected': true,
                   });
                   print("infected");
@@ -113,7 +126,22 @@ class _AdminScreenState extends State<AdminScreen> {
               },
             ),
             ListTile(
-              title: Text('Refresh'),
+              leading: GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTap: () {
+                  setState(() {});
+                  // Then close the drawer
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  width: 48,
+                  height: 48,
+                  padding: const EdgeInsets.symmetric(vertical: 4.0),
+                  alignment: Alignment.center,
+                  child: const CircleAvatar(),
+                ),
+              ),
+              title: Text('Refresh',style: TextStyle(fontSize: 25.0,color: Colors.green),),
               onTap: () {
                 // Update the state of the app
                 setState(() {});
@@ -122,14 +150,37 @@ class _AdminScreenState extends State<AdminScreen> {
               },
             ),
             ListTile(
-              title: Text('I am Not Infected'),
+              leading: GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTap: () {
+                  setState(() {
+                    _firestore
+                        .collection('users')
+                        .document(loggedInUser.email)
+                        .updateData({
+                      'is infected': false,
+                    });
+                    print(" Not infected");
+                  });
+                  // Then close the drawer
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  width: 48,
+                  height: 48,
+                  padding: const EdgeInsets.symmetric(vertical: 4.0),
+                  alignment: Alignment.center,
+                  child: const CircleAvatar(),
+                ),
+              ),
+              title: Text('Not Infected',style: TextStyle(fontSize: 25.0),),
               onTap: () {
                 // Update the state of the app
                 setState(() {
                   _firestore
                       .collection('users')
                       .document(loggedInUser.email)
-                      .setData({
+                      .updateData({
                     'is infected': false,
                   });
                   print(" Not infected");
@@ -139,7 +190,23 @@ class _AdminScreenState extends State<AdminScreen> {
               },
             ),
             ListTile(
-              title: Text('Restart'),
+              leading: GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTap: () {
+                  // Update the state of the app
+                  Phoenix.rebirth(context);
+                  // Then close the drawer
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  width: 48,
+                  height: 48,
+                  padding: const EdgeInsets.symmetric(vertical: 4.0),
+                  alignment: Alignment.center,
+                  child: const CircleAvatar(),
+                ),
+              ),
+              title: Text('Restart',style: TextStyle(fontSize: 25.0,color: Colors.red),),
               onTap: () {
                 // Update the state of the app
                 Phoenix.rebirth(context);
@@ -196,10 +263,7 @@ class _AdminScreenState extends State<AdminScreen> {
 
 
 class UserStream extends StatelessWidget {
-  Firestore _firestore = Firestore.instance;
-  FirebaseUser loggedInUser;
-  String testText = '';
-  final _auth = FirebaseAuth.instance;
+  final Firestore _firestore = Firestore.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -216,13 +280,21 @@ class UserStream extends StatelessWidget {
         final messages = snapshot.data.documents.reversed;
         List<UserCard> messageBubbles = [];
         for (var message in messages) {
+          final userEmail=message.documentID;
           final users = message.data['username'];
-          final infectedStatus = message.data['is infected'] ? "Infected": "Not Infected" ;
+          bool data=message.data['is infected'];
+          String infectedStatus ;
+          if(data==null){
+            infectedStatus="Loading";
+          }else{
+            infectedStatus =  data ? "Infected": "Not Infected" ;
+        }
 
           final messageBubble = UserCard(
             imagePath: 'images/profile1.jpg',
             infection: infectedStatus,
             contactUsername: users,
+            contactEmail:userEmail,
           );
 
           messageBubbles.add(messageBubble);
