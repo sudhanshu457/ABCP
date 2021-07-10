@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:contacttracingprototype/components/rounded_button.dart';
 import 'package:contacttracingprototype/constants.dart';
-import 'package:contacttracingprototype/nearby_interface.dart';
+import 'package:contacttracingprototype/screens/login.dart';
+import 'nearby_interface.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -85,17 +86,21 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       final newUser =
                           await _auth.createUserWithEmailAndPassword(
                               email: email, password: password);
-                      if (newUser != null) {
+                      if (newUser != null&&userName.isNotEmpty) {
                         _firestore.collection('users').document(email).setData({
                           'username': userName,
+                          'is infected': false,
                         });
                         Navigator.pushNamed(context, NearbyInterface.id);
+                      } else {
+                        Navigator.pushNamed(context, RegistrationScreen.id);
                       }
                       setState(() {
                         showSpinner = false;
                       });
                     } catch (e) {
                       print(e);
+                      Navigator.pushNamed(context, RegistrationScreen.id);
                     }
                   },
                 ),
