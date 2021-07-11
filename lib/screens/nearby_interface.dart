@@ -121,7 +121,7 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          'Covid Tracing',
+          'CovidTracing',
           style: TextStyle(
             color: Colors.deepPurple[800],
             fontWeight: FontWeight.bold,
