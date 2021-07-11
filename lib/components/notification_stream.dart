@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../components/contact_card.dart';
+import '../components/notificationCard.dart';
 
 bool infectedStatus;
 Firestore _firestore = Firestore.instance;
 
 class NotificationStream extends StatelessWidget {
-  var loggedInUserEmail;
+  final loggedInUserEmail;
   static int notificationCount = 0;
 
-  NotificationStream(loggedUserEmail) {
-    this.loggedInUserEmail = loggedUserEmail;
-  }
+  NotificationStream(this.loggedInUserEmail);
+
+  // NotificationStream(loggedUserEmail) {
+  //   this.loggedInUserEmail = loggedUserEmail;
+  // }
 
   Future<String> getInfectedStatus(id) async {
     bool isInf;
@@ -57,12 +59,9 @@ class NotificationStream extends StatelessWidget {
           );
         }
         final messages = snapshot.data.documents.reversed;
-        List<Text> messageBubbles = [];
+        List<NotificationCard> messageBubbles = [];
         for (var message in messages) {
           final users = message.data['username'];
-          final locationContact = message.data['contact location'];
-          final timeContact = message.data['contact time'];
-          final emailUser = message.data['user email'];
 
           Firestore.instance.collection('users')
               .where('username', isEqualTo: users)
@@ -82,24 +81,16 @@ class NotificationStream extends StatelessWidget {
             xyz = infectedStatus ? 'Infected' : 'Not Infected';
           if(xyz == null)
             xyz = 'No data available';
-          final messageBubble = ContactCard(
-            imagePath: 'images/profile1.jpg',
-            infection: xyz,
-            contactUsername: users,
-            email: emailUser,
-            contactTime: timeContact,
-            contactLocation: locationContact,
-          );
 
           int counter = 0;
 
-          if(messageBubble.infection == 'Infected') {
+          if(xyz == 'Infected') {
             notificationCount++;
-            String usernameOfContact = messageBubble.contactUsername;
-            messageBubbles.add(Text(
-                'User $usernameOfContact is Infected!',
-              style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-            ));
+            final messageBubble = NotificationCard(
+              infection: xyz,
+              contactUsername: users,
+            );
+            messageBubbles.add(messageBubble);
           }
         }
         return Expanded(

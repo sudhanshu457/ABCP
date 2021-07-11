@@ -165,7 +165,7 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
                 color: Colors.deepPurple[800],
               ),
               child: loggedInUser != null
-                  ? Text(loggedInUser.email,style: TextStyle(fontSize: 35.0,fontStyle: FontStyle.italic,fontWeight: FontWeight.w900),)
+                  ? Text(loggedInUser.email,style: TextStyle(fontSize: 35.0,fontStyle: FontStyle.italic,fontWeight: FontWeight.w900))
                   : Text("Loading"),
             ),
             ListTile(
