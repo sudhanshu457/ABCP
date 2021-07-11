@@ -1,17 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'bottom_sheet_text.dart';
-import 'package:geocoder/geocoder.dart';
-
-class NotificationCard extends StatelessWidget {
-  NotificationCard(
-      { this.infection,
-        this.contactUsername,
-      });
 
 
-  final String infection;
-  final String contactUsername;
+class SideCard extends StatelessWidget {
+  SideCard(this.text);
+
+  final String text;
 
   @override
   Widget build(BuildContext context) {
@@ -19,15 +14,13 @@ class NotificationCard extends StatelessWidget {
       elevation: 3.0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
       child: ListTile(
-        trailing: Icon(Icons.more_horiz),
         title: Text(
-          "Username",
+          text,
           style: TextStyle(
             color: Colors.deepPurple[700],
             fontWeight: FontWeight.bold,
           ),
         ),
-        subtitle: infection =='Infected' ?Text("User is Infected! Please Do the Covid test"):Text("User is not infected!"),
       ),
     );
   }

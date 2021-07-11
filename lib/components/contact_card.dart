@@ -31,7 +31,7 @@ class ContactCard extends StatelessWidget {
         ),
         trailing: Icon(Icons.more_horiz),
         title: Text(
-          email,
+          "dummy@gmail.com",
           style: TextStyle(
             color: Colors.deepPurple[700],
             fontWeight: FontWeight.bold,
@@ -46,7 +46,7 @@ class ContactCard extends StatelessWidget {
                 child: Column(
                   children: <Widget>[
                     BottomSheetText(
-                        question: 'Username', result: contactUsername),
+                        question: 'Username', result: "ContactUsername"),
                     SizedBox(height: 5.0),
                     BottomSheetText(
                         question: 'Contact Time',

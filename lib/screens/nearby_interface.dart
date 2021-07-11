@@ -9,6 +9,7 @@ import '../constants.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'welcome_screen.dart';
 import '../components/listOfContacts.dart';
+import '../components/sideCard.dart';
 
 Location location = Location();
 Firestore _firestore = Firestore.instance;
